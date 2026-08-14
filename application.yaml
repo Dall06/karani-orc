@@ -1,0 +1,114 @@
+ktor:
+  deployment:
+    port: 8080
+  application:
+    modules:
+      - com.dall06.karani.adapters.http.RoutingKt.configureRouting
+
+karani:
+  database:
+    # 1. Configuración de la base de datos de Reglas y ACLs (Origen de verdad único)
+    config:
+      type: "sqlite"  # Opciones: "sqlite", "postgres"
+      sqlite:
+        url: "jdbc:sqlite:karani-config.db"
+      postgres:
+        url: "jdbc:postgresql://localhost:5432/karani_config_db"
+
+    # 2. Configuración de la Bitácora de Eventos (Soporta replicación paralela si se usa "all")
+    events:
+      type: "all"  # Opciones: "sqlite", "postgres", "mongodb", "all"
+      sqlite:
+        - id: "sqlite-events-1"
+          url: "jdbc:sqlite:karani-events-1.db"
+        - id: "sqlite-events-2"
+          url: "jdbc:sqlite:karani-events-2.db"
+      postgres:
+        - id: "pg-events-1"
+          url: "jdbc:postgresql://localhost:5432/karani_events_1"
+        - id: "pg-events-2"
+          url: "jdbc:postgresql://localhost:5432/karani_events_2"
+      mongodb:
+        - id: "mongo-events-1"
+          url: "mongodb://localhost:27017/karani_events_1"
+        - id: "mongo-events-2"
+          url: "mongodb://localhost:27017/karani_events_2"
+
+  # Configuración Global para Múltiples Canales de Entrada (Multi-Inputs)
+  inputs:
+    http:
+      - id: "shopify-store-1"
+        path: "/webhook/shopify/tienda-1"
+        max-body-size-bytes: 10485760
+        rate-limit-rpm: 600
+        secret: "token_secreto_shopify_1"
+      - id: "shopify-store-2"
+        path: "/webhook/shopify/tienda-2"
+        max-body-size-bytes: 5242880
+        rate-limit-rpm: 300
+        secret: "token_secreto_shopify_2"
+      - id: "stripe-payments"
+        path: "/webhook/stripe"
+        max-body-size-bytes: 2097152
+        rate-limit-rpm: 1000
+        secret: "whsec_stripe_123"
+
+  # Configuración Global para Canales de Salida Múltiples (Multi-Outputs)
+  outputs:
+    http:
+      - id: "prod-api-1"
+        connect-timeout-ms: 5000
+        request-timeout-ms: 10000
+        max-connections: 500
+      - id: "prod-api-2"
+        connect-timeout-ms: 3000
+        request-timeout-ms: 6000
+        max-connections: 200
+      - id: "backup-api"
+        connect-timeout-ms: 10000
+        request-timeout-ms: 20000
+        max-connections: 50
+
+    kafka:
+      - id: "local-kafka"
+        bootstrap-servers: "localhost:9092"
+        client-id: "karani-local"
+        acks: "all"
+      - id: "external-kafka"
+        bootstrap-servers: "kafka.external-service.com:9092"
+        client-id: "karani-external"
+        acks: "1"
+      - id: "backup-kafka"
+        bootstrap-servers: "kafka.backup-service.com:9092"
+        client-id: "karani-backup"
+        acks: "0"
+
+    websocket:
+      - id: "public-ws"
+        path: "/ws/events"
+        ping-period-seconds: 15
+        timeout-seconds: 15
+      - id: "internal-ws"
+        path: "/ws/internal/events"
+        ping-period-seconds: 30
+        timeout-seconds: 30
+      - id: "admin-ws"
+        path: "/ws/admin/events"
+        ping-period-seconds: 5
+        timeout-seconds: 5
+
+    grpc:
+      - id: "primary-grpc"
+        port: 50051
+      - id: "secondary-grpc"
+        port: 50052
+      - id: "backup-grpc"
+        port: 50053
+
+  # Configuración de APIs de entrada adicionales (ej: GET)
+  api:
+    api-key: "karani-admin-token-xyz"
+    get-events:
+      enabled: true
+      default-page-size: 50
+      max-page-size: 100

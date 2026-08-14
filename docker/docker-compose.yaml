@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  karani-orc:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: karani-orchestrator
+    ports:
+      - "8080:8080"
+    environment:
+      # Sobrescribir variables de entorno de base de datos de producción
+      - KARANI_DATABASE_CONFIG_URL=jdbc:postgresql://postgres:5432/karani_config
+      - KARANI_DATABASE_EVENTS_URL=jdbc:postgresql://postgres:5432/karani_events
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: karani-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: karani_config
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

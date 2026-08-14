@@ -1,0 +1,22 @@
+# Gradle
+.gradle/
+build/
+
+# Kotlin & IntelliJ IDEA
+.kotlin/
+.idea/
+*.iml
+out/
+
+# Local databases (SQLite)
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
