@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karani Webhook Orchestrator — Ultra-Resilient Routing Gateway</title>
+    <meta name="description" content="Motor de orquestación, enrutamiento y transformación de webhooks de alto rendimiento desarrollado en Kotlin.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --primary-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --accent-gradient: linear-gradient(135deg, #f02fc2 0%, #6094ea 100%);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --cyan: #00f2fe;
+            --border-glow: rgba(0, 242, 254, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+        }
+
+        /* Background decorations */
+        .bg-glow-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+            top: -100px;
+            right: -50px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .bg-glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(240, 47, 194, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+            top: 600px;
+            left: -100px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        header {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 15, 25, 0.8);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan);
+        }
+
+        .btn-github {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 0.5rem 1.2rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-github:hover {
+            background: var(--primary-gradient);
+            border-color: transparent;
+            color: #0b0f19;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 6rem 0 4rem 0;
+            text-align: center;
+        }
+
+        .hero-badge {
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            color: var(--cyan);
+            padding: 0.4rem 1.2rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #ffffff, #a3b8cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: #0b0f19;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 242, 254, 0.35);
+        }
+
+        /* Features */
+        .features {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 3rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 242, 254, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.05);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Console Demo */
+        .console-section {
+            padding: 4rem 0;
+        }
+
+        .console {
+            background: #07090e;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 2rem;
+            color: #38bdf8;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .console-header {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.8rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ef4444; }
+        .dot-yellow { background-color: #eab308; }
+        .dot-green { background-color: #22c55e; }
+
+        .console-line {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .console-input {
+            color: #f3f4f6;
+        }
+
+        .console-output {
+            color: #10b981;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                🦅 Karani
+            </div>
+            <div class="nav-links">
+                <a href="#features">Características</a>
+                <a href="#demo">Consola</a>
+                <a href="https://github.com/Dall06/karani-orc" class="btn-github">Ver en GitHub</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-badge">RELEASE V1.0.0 — KOTLIN NATIVE</div>
+            <h1>The Ultra-Resilient Webhook Gateway</h1>
+            <p>Orquestador, enrutador y transformador de payloads en tiempo real. Autenticación criptográfica, reintentos con backoff exponencial, rate limiting y resiliencia nativa basada en corrutinas.</p>
+            <div class="hero-actions">
+                <a href="https://github.com/Dall06/karani-orc" class="btn-primary">Empezar Ahora</a>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2 class="section-title">Diseñado para Alta Carga y Tolerancia a Fallos</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Despacho Asíncrono</h3>
+                    <p>Despacho en paralelo hacia múltiples destinos (HTTP, Kafka, gRPC, WebSockets) usando el modelo ligero de Coroutines de Kotlin.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Seguridad y Firmas</h3>
+                    <p>Verificación nativa en caliente de firmas criptográficas HMAC-SHA256, ECDSA-SHA256 y descifrado AES de secretos en base de datos.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔄</div>
+                    <h3>Reintentos Dinámicos</h3>
+                    <p>Backoff exponencial completamente configurable por destino para reintentar entregas fallidas de forma automática y ordenada.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛑</div>
+                    <h3>Rate Limiting & Filtros</h3>
+                    <p>Protección integrada contra denegación de servicio (DoS) limitando peticiones (RPM) y tamaño de payload (maxBodySizeBytes) por endpoint.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="demo" class="console-section">
+            <h2 class="section-title">Consola de Auditoría</h2>
+            <div class="console">
+                <div class="console-header">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                </div>
+                <div class="console-line console-input">$ curl -X GET http://localhost:8080/api/v1/events/evt_998877</div>
+                <div class="console-line console-output">{</div>
+                <div class="console-line console-output">&nbsp;&nbsp;"id": "evt_998877",</div>
+                <div class="console-line console-output">&nbsp;&nbsp;"endpointId": "stripe-payments",</div>
+                <div class="console-line console-output">&nbsp;&nbsp;"status": "SUCCESS",</div>
+                <div class="console-line console-output">&nbsp;&nbsp;"attempts": [</div>
+                <div class="console-line console-output">&nbsp;&nbsp;&nbsp;&nbsp;{ "attempt": 1, "status": "FAILED", "code": 503, "error": "Service Unavailable" },</div>
+                <div class="console-line console-output">&nbsp;&nbsp;&nbsp;&nbsp;{ "attempt": 2, "status": "SUCCESS", "code": 200, "error": null }</div>
+                <div class="console-line console-output">&nbsp;&nbsp;]</div>
+                <div class="console-line console-output">}</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Karani Webhook Orchestrator. Creado para alta resiliencia.</p>
+        </div>
+    </footer>
+</body>
+</html>
