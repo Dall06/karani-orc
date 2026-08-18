@@ -115,6 +115,7 @@ class RoutingTest {
             config = io.ktor.server.config.MapApplicationConfig(
                 "karani.database.config-url" to "jdbc:sqlite:test-routing.db",
                 "karani.database.events-url" to "jdbc:sqlite:test-routing.db",
+                "karani.api-key" to "test-api-key",
                 "karani.api.get-events.enabled" to "true",
                 "karani.api.get-events.default-page-size" to "10"
             )
@@ -140,7 +141,9 @@ class RoutingTest {
             header("Content-Type", "application/json")
         }
 
-        val response = client.get("/api/v1/events?limit=5")
+        val response = client.get("/api/v1/events?limit=5") {
+            header("X-API-Key", "test-api-key")
+        }
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("PENDING"))
     }
