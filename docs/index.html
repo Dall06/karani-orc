@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Karani Webhook Orchestrator — Ultra-Resilient Routing Gateway</title>
-    <meta name="description" content="Motor de orquestación, enrutamiento y transformación de webhooks de alto rendimiento desarrollado en Kotlin.">
+    <meta name="description" content="High-performance webhook orchestration, routing and transformation engine designed in Kotlin.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,10 +97,15 @@
             gap: 0.5rem;
         }
 
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
         .nav-links a {
             color: var(--text-muted);
             text-decoration: none;
-            margin-left: 2rem;
             font-weight: 500;
             transition: color 0.3s ease;
         }
@@ -125,6 +130,32 @@
             border-color: transparent;
             color: #0b0f19;
             box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        /* Language Switcher */
+        .lang-switch {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--cyan);
         }
 
         /* Hero */
@@ -304,17 +335,36 @@
                 🦅 Karani
             </div>
             <div class="nav-links">
-                <a href="#features">Características</a>
-                <a href="#demo">Consola</a>
-                <a href="https://github.com/Dall06/karani-orc" class="btn-github">Ver en GitHub</a>
+                <a href="#features" data-lang="en">Features</a>
+                <a href="#features" data-lang="es" style="display:none;">Características</a>
+                <a href="#demo" data-lang="en">Console</a>
+                <a href="#demo" data-lang="es" style="display:none;">Consola</a>
+                
+                <div class="lang-switch">
+                    <button class="lang-btn active" onclick="setLanguage('en', this)">EN</button>
+                    <button class="lang-btn" onclick="setLanguage('es', this)">ES</button>
+                </div>
+
+                <a href="https://github.com/Dall06/karani-orc" class="btn-github">GitHub</a>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <section class="hero">
+        <!-- English Hero -->
+        <section class="hero" data-lang="en">
             <div class="hero-badge">RELEASE V1.0.0 — KOTLIN NATIVE</div>
             <h1>The Ultra-Resilient Webhook Gateway</h1>
+            <p>Real-time webhook orchestrator, router, and transformation engine. Cryptographic signatures validation, exponential backoff retries, rate limiting, and native coroutines fault tolerance.</p>
+            <div class="hero-actions">
+                <a href="https://github.com/Dall06/karani-orc" class="btn-primary">Get Started</a>
+            </div>
+        </section>
+
+        <!-- Spanish Hero -->
+        <section class="hero" data-lang="es" style="display:none;">
+            <div class="hero-badge">RELEASE V1.0.0 — KOTLIN NATIVE</div>
+            <h1>El Webhook Gateway Ultra-Resiliente</h1>
             <p>Orquestador, enrutador y transformador de payloads en tiempo real. Autenticación criptográfica, reintentos con backoff exponencial, rate limiting y resiliencia nativa basada en corrutinas.</p>
             <div class="hero-actions">
                 <a href="https://github.com/Dall06/karani-orc" class="btn-primary">Empezar Ahora</a>
@@ -322,8 +372,35 @@
         </section>
 
         <section id="features" class="features">
-            <h2 class="section-title">Diseñado para Alta Carga y Tolerancia a Fallos</h2>
-            <div class="grid">
+            <h2 class="section-title" data-lang="en">Designed for High Load & Fault Tolerance</h2>
+            <h2 class="section-title" data-lang="es" style="display:none;">Diseñado para Alta Carga y Tolerancia a Fallos</h2>
+            
+            <!-- English Cards -->
+            <div class="grid" data-lang="en">
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Async Dispatch</h3>
+                    <p>Parallel delivery to multiple destinations (HTTP, Kafka, gRPC, WebSockets) using Kotlin's lightweight Coroutines model.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Security Gates</h3>
+                    <p>On-the-fly verification of HMAC-SHA256, ECDSA-SHA256 signatures, and AES decryption of secrets in database.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔄</div>
+                    <h3>Dynamic Retries</h3>
+                    <p>Fully configurable exponential backoff policies per destination to retry failed deliveries automatically.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛑</div>
+                    <h3>Rate Limiting & Size</h3>
+                    <p>Built-in DoS protection by limiting requests (RPM) and payload body size (maxBodySizeBytes) per endpoint.</p>
+                </div>
+            </div>
+
+            <!-- Spanish Cards -->
+            <div class="grid" data-lang="es" style="display:none;">
                 <div class="card">
                     <div class="card-icon">⚡</div>
                     <h3>Despacho Asíncrono</h3>
@@ -348,7 +425,8 @@
         </section>
 
         <section id="demo" class="console-section">
-            <h2 class="section-title">Consola de Auditoría</h2>
+            <h2 class="section-title" data-lang="en">Audit Console</h2>
+            <h2 class="section-title" data-lang="es" style="display:none;">Consola de Auditoría</h2>
             <div class="console">
                 <div class="console-header">
                     <div class="dot dot-red"></div>
@@ -371,8 +449,25 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Karani Webhook Orchestrator. Creado para alta resiliencia.</p>
+            <p data-lang="en">&copy; 2026 Karani Webhook Orchestrator. Built for high resilience.</p>
+            <p data-lang="es" style="display:none;">&copy; 2026 Karani Webhook Orchestrator. Creado para alta resiliencia.</p>
         </div>
     </footer>
+
+    <script>
+        function setLanguage(lang, btnElement) {
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                if (el.getAttribute('data-lang') === lang) {
+                    el.style.display = '';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            btnElement.classList.add('active');
+        }
+    </script>
 </body>
 </html>
